@@ -9,7 +9,7 @@ function App() {
   return (
     <MovieProvider>
       <Router>
-        <div className="min-h-screen bg-[#0a0a0a] text-white font-body selection:bg-terra/30">
+        <div className="min-h-screen bg-[#0a0a0a] text-white font-body">
           <Navbar />
           <main>
             <Routes>
