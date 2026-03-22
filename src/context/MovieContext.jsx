@@ -31,4 +31,4 @@ export const MovieProvider = ({ children }) => {
   );
 };
 
-export const useMovieContext = () => useContext(MovieContext);
+export const useMovieContext = () => useContext(MovieContext); 
