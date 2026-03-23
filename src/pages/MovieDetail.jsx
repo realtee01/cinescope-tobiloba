@@ -16,8 +16,14 @@ const MovieDetail = () => {
       try {
         setLoading(true);
         const token = import.meta.env.VITE_TMDB_TOKEN;
-        const options = { headers: { Authorization: `Bearer ${token}` } };
-        
+        const options = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            accept: 'application/json'
+          }
+        };
+
+        // We use Promise.all to fetch everything at the same time correctly
         const [movieRes, castRes, similarRes] = await Promise.all([
           fetch(`https://api.themoviedb.org/3/movie/${id}`, options),
           fetch(`https://api.themoviedb.org/3/movie/${id}/credits`, options),
@@ -29,65 +35,87 @@ const MovieDetail = () => {
         const similarData = await similarRes.json();
 
         setMovie(movieData);
-        setCast(castData.cast.slice(0, 10)); // Top 10 cast members
-        setSimilar(similarData.results.slice(0, 4)); // Top 4 similar
+        setCast(castData.cast?.slice(0, 10) || []);
+        setSimilar(similarData.results?.slice(0, 4) || []);
       } catch (err) {
-        console.error(err);
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchDetails();
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 0); // Reset scroll to top when opening a movie
   }, [id]);
 
-  if (loading) return <div className="p-20 text-center animate-pulse text-2xl">Loading Movie Details...</div>;
-  if (!movie) return <div className="p-20 text-center">Movie not found.</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (!movie) return <div className="min-h-screen flex items-center justify-center">Movie not found.</div>;
 
   return (
-    <div className="pb-20">
-      <button onClick={() => navigate(-1)} className="m-6 flex items-center gap-2 text-white/60 hover:text-white">
-        <ArrowLeft className="w-5 h-5" /> Back
-      </button>
-
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-[400px_1fr] gap-12">
+    <div className="min-h-screen pb-20">
+      {/* Hero Header */}
+      <div className="relative h-[70vh] w-full">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent z-10" />
         <img 
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} 
-          className="rounded-3xl shadow-2xl w-full"
-          alt={movie.title}
+          src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`} 
+          className="w-full h-full object-cover"
+          alt=""
         />
-        
-        <div className="space-y-6">
-          <h1 className="text-5xl font-display font-black">{movie.title}</h1>
-          <p className="text-terra-light italic text-xl">{movie.tagline}</p>
-          
-          <div className="flex flex-wrap gap-6 text-sm text-white/70">
-            <div className="flex items-center gap-2"><Star className="w-4 h-4 text-amber-400 fill-current" /> {movie.vote_average.toFixed(1)}</div>
-            <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> {movie.runtime} min</div>
-            <div className="flex items-center gap-2"><Calendar className="w-4 h-4" /> {movie.release_date.split('-')[0]}</div>
-          </div>
+        <button 
+          onClick={() => navigate(-1)}
+          className="absolute top-8 left-8 z-20 p-3 bg-black/50 backdrop-blur-xl rounded-full border border-white/10 hover:bg-[#C4622D] transition-all"
+        >
+          <ArrowLeft size={24} />
+        </button>
+      </div>
 
-          <div className="space-y-2">
-            <h3 className="text-xl font-bold">Overview</h3>
-            <p className="leading-relaxed text-white/80">{movie.overview}</p>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold">Top Cast</h3>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-              {cast.map(person => (
-                <div key={person.id} className="min-w-[100px] text-center">
-                  <img 
-                    src={person.profile_path ? `https://image.tmdb.org/t/p/w200${person.profile_path}` : 'https://via.placeholder.com/200x300?text=No+Photo'} 
-                    className="w-20 h-20 rounded-full object-cover mx-auto mb-2 border-2 border-white/10"
-                    alt={person.name}
-                  />
-                  <p className="text-[10px] font-bold truncate w-24">{person.name}</p>
-                </div>
-              ))}
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-6 -mt-32 relative z-20">
+        <div className="grid md:grid-cols-[300px_1fr] gap-12">
+          <img 
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} 
+            className="rounded-2xl shadow-2xl border border-white/10 hidden md:block"
+            alt={movie.title}
+          />
+          <div>
+            <h1 className="text-4xl md:text-6xl font-black mb-4 uppercase italic tracking-tighter">
+              {movie.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-6 text-white/60 mb-8 font-medium">
+              <span className="flex items-center gap-2"><Star size={18} className="text-yellow-500 fill-yellow-500"/> {movie.vote_average?.toFixed(1)}</span>
+              <span className="flex items-center gap-2"><Clock size={18}/> {movie.runtime} mins</span>
+              <span className="flex items-center gap-2"><Calendar size={18}/> {movie.release_date?.split('-')[0]}</span>
+            </div>
+            <p className="text-lg md:text-xl text-white/80 leading-relaxed mb-10 max-w-3xl">
+              {movie.overview}
+            </p>
+            
+            {/* Cast List */}
+            <div className="mb-12">
+              <h2 className="text-xl font-bold mb-4 uppercase tracking-widest text-[#C4622D]">Top Cast</h2>
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                {cast.map(person => (
+                  <div key={person.id} className="min-w-[100px] text-center">
+                    <div className="w-20 h-20 mx-auto rounded-full overflow-hidden mb-2 border border-white/10">
+                      <img src={`https://image.tmdb.org/t/p/w200${person.profile_path}`} className="w-full h-full object-cover" alt=""/>
+                    </div>
+                    <p className="text-[10px] font-bold truncate">{person.name}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Similar Movies */}
+        {similar.length > 0 && (
+          <div className="mt-20">
+            <h2 className="text-2xl font-bold mb-8 italic uppercase tracking-tighter">You might also like</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {similar.map(item => <MovieCard key={item.id} movie={item} />)}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
