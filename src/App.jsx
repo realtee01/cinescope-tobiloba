@@ -9,15 +9,14 @@ function App() {
   return (
     <MovieProvider>
       <Router>
-        <div className="min-h-screen bg-[#0a0a0a] text-white font-body">
+        <div className="min-h-screen bg-[#0a0a0a] text-white">
           <Navbar />
           <main>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/movie/:id" element={<MovieDetail />} />
               <Route path="/watchlist" element={<Watchlist />} />
-              {/* Fallback to Home if path is wrong */}
-              <Route path="*" element={<Home />} />
+              {/* REMOVED the wildcard fallback that was causing the jump-back */}
             </Routes>
           </main>
         </div>
