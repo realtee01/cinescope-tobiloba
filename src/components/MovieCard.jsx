@@ -3,41 +3,51 @@ import { Heart, Star } from 'lucide-react';
 import { useMovieContext } from '../context/MovieContext';
 
 const MovieCard = ({ movie }) => {
-  const { addToWatchlist, removeFromWatchlist, isWatchlisted } = useMovieContext();
-  const saved = isWatchlisted(movie.id);
+  const { isWatchlisted, addToWatchlist, removeFromWatchlist } = useMovieContext();
+  const exists = isWatchlisted(movie.id);
 
   const toggleWatchlist = (e) => {
     e.preventDefault();
-    saved ? removeFromWatchlist(movie.id) : addToWatchlist(movie);
+    if (exists) {
+      removeFromWatchlist(movie.id);
+    } else {
+      addToWatchlist(movie);
+    }
   };
 
-  [span_11](start_span)// Image null handling[span_11](end_span)
-  const posterUrl = movie.poster_path 
-    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
-    : 'https://via.placeholder.com/500x750?text=No+Poster';
-
   return (
-    <div className="group relative bg-white/5 rounded-xl overflow-hidden hover:scale-105 transition-transform duration-300">
-      <Link to={`/movie/${movie.id}`}>
-        <img src={posterUrl} alt={movie.title} className="w-full aspect-[2/3] object-cover" />
-        <div className="p-4">
-          <h3 className="font-bold truncate">{movie.title}</h3>
-          <div className="flex items-center justify-between mt-2 text-sm text-white/60">
-            <span>{movie.release_date?.split('-')[0]}</span>
-            <div className="flex items-center gap-1 text-amber-400">
-              <Star className="w-3 h-3 fill-current" />
-              <span>{movie.vote_average?.toFixed(1)}</span>
-            </div>
-          </div>
+    <Link 
+      to={`/movie/${movie.id}`} 
+      className="group relative bg-white/5 rounded-xl overflow-hidden transition-all hover:scale-[1.02] hover:bg-white/10"
+    >
+      <div className="relative aspect-[2/3] w-full">
+        <img 
+          src={movie.poster_path 
+            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+            : 'https://via.placeholder.com/500x750?text=No+Poster'} 
+          alt={movie.title}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+        <button 
+          onClick={toggleWatchlist}
+          className="absolute top-2 right-2 p-2 bg-black/60 backdrop-blur-md rounded-full text-white transition-colors hover:text-[#C4622D]"
+          aria-label={exists ? "Remove from watchlist" : "Add to watchlist"}
+        >
+          <Heart className={exists ? "fill-[#C4622D] text-[#C4622D]" : ""} size={20} />
+        </button>
+      </div>
+
+      <div className="p-3">
+        <h3 className="font-bold truncate text-sm text-white">{movie.title}</h3>
+        <div className="flex items-center gap-1 mt-1 text-xs text-white/60">
+          <Star size={12} className="text-yellow-500 fill-yellow-500" />
+          <span>{movie.vote_average?.toFixed(1) || '0.0'}</span>
+          <span className="mx-1">•</span>
+          <span>{movie.release_date?.split('-')[0] || 'N/A'}</span>
         </div>
-      </Link>
-      <button 
-        onClick={toggleWatchlist}
-        className="absolute top-3 right-3 p-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10 hover:bg-terra transition-colors"
-      >
-        <Heart className={`w-4 h-4 ${saved ? 'fill-white text-white' : 'text-white'}`} />
-      </button>
-    </div>
+      </div>
+    </Link>
   );
 };
 
