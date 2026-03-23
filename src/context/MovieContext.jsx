@@ -31,4 +31,10 @@ export const MovieProvider = ({ children }) => {
   );
 };
 
-export const useMovieContext = () => useContext(MovieContext);
+export const useMovieContext = () => {
+  const context = useContext(MovieContext);
+  if (!context) {
+    throw new Error('useMovieContext must be used within a MovieProvider');
+  }
+  return context;
+};
