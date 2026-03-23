@@ -16,6 +16,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/movie/:id" element={<MovieDetail />} />
               <Route path="/watchlist" element={<Watchlist />} />
+              {/* Fallback to Home if path is wrong */}
+              <Route path="*" element={<Home />} />
             </Routes>
           </main>
         </div>
