@@ -25,21 +25,10 @@ export const MovieProvider = ({ children }) => {
   const isWatchlisted = (movieId) => watchlist.some(m => m.id === movieId);
 
   return (
-    <MovieContext.Provider value={{ 
-      watchlist, 
-      addToWatchlist, 
-      removeFromWatchlist, 
-      isWatchlisted 
-    }}>
+    <MovieContext.Provider value={{ watchlist, addToWatchlist, removeFromWatchlist, isWatchlisted }}>
       {children}
     </MovieContext.Provider>
   );
 };
 
-export const useMovieContext = () => {
-  const context = useContext(MovieContext);
-  if (!context) {
-    throw new Error('useMovieContext must be used within a MovieProvider');
-  }
-  return context;
-};
+export const useMovieContext = () => useContext(MovieContext);
