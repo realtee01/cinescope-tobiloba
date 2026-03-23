@@ -1,28 +1,39 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Search, Heart, Menu, X } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Search, Heart } from 'lucide-react';
 import { useMovieContext } from '../context/MovieContext';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const { watchlist } = useMovieContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // FIX: Only trigger the search redirect if the user is actually typing
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (query) navigate(`/?search=${encodeURIComponent(query)}`);
-      else if (query === '') navigate('/');
-    }, 400);
-    return () => clearTimeout(timer);
+    if (query.trim().length > 0) {
+      const timer = setTimeout(() => {
+        navigate(`/?search=${encodeURIComponent(query)}`);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
   }, [query, navigate]);
+
+  // FIX: Clear search bar when navigating away from Home
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      setQuery('');
+    }
+  }, [location.pathname]);
 
   return (
     <nav className="bg-black/95 border-b border-white/10 sticky top-0 z-50 px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        <Link to="/" className="text-2xl font-black italic text-[#C4622D] font-display">CineScope</Link>
+        <Link to="/" className="text-2xl font-black italic text-[#C4622D]">
+          CineScope
+        </Link>
         
-        <div className="hidden md:flex flex-1 max-w-md relative">
+        <div className="flex-1 max-w-md relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 w-4 h-4" />
           <input 
             type="text" 
@@ -33,22 +44,12 @@ const Navbar = () => {
           />
         </div>
 
-        <div className="flex items-center gap-6">
-          <Link to="/watchlist" className="relative">
-            <Heart className={`w-6 h-6 ${watchlist.length > 0 ? 'fill-[#C4622D] text-[#C4622D]' : 'text-white'}`} />
-            {watchlist.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-[#C4622D] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                {watchlist.length}
-              </span>
-            )}
-          </Link>
-          <button className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X /> : <Menu />}
-          </button>
-        </div>
+        <Link to="/watchlist" className="relative p-2">
+          <Heart className={`w-6 h-6 ${watchlist.length > 0 ? 'fill-[#C4622D] text-[#C4622D]' : 'text-white'}`} />
+        </Link>
       </div>
     </nav>
   );
 };
 
-export default Navbar; 
+export default Navbar;
