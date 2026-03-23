@@ -9,11 +9,12 @@
 }
 
 body {
-  @apply bg-[#0a0a0a] text-white font-body;
+  @apply bg-[#0a0a0a] text-white;
   margin: 0;
+  font-family: 'Outfit', sans-serif;
 }
 
-[span_4](start_span)/* Shimmer Animation for Skeletons - Requirement[span_4](end_span) */
+/* Shimmer Animation for Skeletons */
 .shimmer {
   background: linear-gradient(
     90deg,
@@ -26,6 +27,19 @@ body {
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
