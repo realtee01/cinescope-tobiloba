@@ -25,7 +25,12 @@ export const MovieProvider = ({ children }) => {
   const isWatchlisted = (movieId) => watchlist.some(m => m.id === movieId);
 
   return (
-    <MovieContext.Provider value={{ watchlist, addToWatchlist, removeFromWatchlist, isWatchlisted }}>
+    <MovieContext.Provider value={{ 
+      watchlist, 
+      addToWatchlist, 
+      removeFromWatchlist, 
+      isWatchlisted 
+    }}>
       {children}
     </MovieContext.Provider>
   );
