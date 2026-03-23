@@ -16,7 +16,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/movie/:id" element={<MovieDetail />} />
               <Route path="/watchlist" element={<Watchlist />} />
-              {/* REMOVED the wildcard fallback that was causing the jump-back */}
+              {/* REMOVED: The redirect line that was causing the loop */}
             </Routes>
           </main>
         </div>
