@@ -9,7 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // FIX: Only trigger the search redirect if the user is actually typing
+  // Keep the search fix: Only navigate if user is typing
   useEffect(() => {
     if (query.trim().length > 0) {
       const timer = setTimeout(() => {
@@ -19,7 +19,7 @@ const Navbar = () => {
     }
   }, [query, navigate]);
 
-  // FIX: Clear search bar when navigating away from Home
+  // Clear search bar when navigating away from Home
   useEffect(() => {
     if (location.pathname !== '/') {
       setQuery('');
@@ -38,14 +38,26 @@ const Navbar = () => {
           <input 
             type="text" 
             placeholder="Search movies..." 
-            className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:border-[#C4622D]"
+            className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:border-[#C4622D] text-sm"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
 
-        <Link to="/watchlist" className="relative p-2">
-          <Heart className={`w-6 h-6 ${watchlist.length > 0 ? 'fill-[#C4622D] text-[#C4622D]' : 'text-white'}`} />
+        {/* WATCHLIST HEART + COUNTER BADGE */}
+        <Link to="/watchlist" className="relative p-2 group">
+          <Heart 
+            className={`w-6 h-6 transition-colors ${
+              watchlist.length > 0 ? 'fill-[#C4622D] text-[#C4622D]' : 'text-white/70 group-hover:text-white'
+            }`} 
+          />
+          
+          {/* THE COUNTER ICON */}
+          {watchlist.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-[#C4622D] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-black min-w-[20px] text-center">
+              {watchlist.length}
+            </span>
+          )}
         </Link>
       </div>
     </nav>
