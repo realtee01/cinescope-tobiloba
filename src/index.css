@@ -14,7 +14,7 @@ body {
   font-family: 'Outfit', sans-serif;
 }
 
-/* Shimmer Animation for Skeletons */
+/* the Shimmer Animation for Skeletons */
 .shimmer {
   background: linear-gradient(
     90deg,
