@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
-import SkeletonCard from '../components/SkeletonCard'; // Ensure the name matches your file
+import SkeletonCard from '../components/MovieSkeleton'; // FIXED: Matches your filename
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
@@ -14,6 +14,7 @@ const Home = () => {
     try {
       setLoading(true);
       setError(null);
+      
       const token = import.meta.env.VITE_TMDB_TOKEN;
       const options = {
         headers: {
@@ -22,16 +23,16 @@ const Home = () => {
         }
       };
 
-      // If there is a query, use the Search endpoint; otherwise, use Trending
+      // Search endpoint if query exists, otherwise Trending
       const endpoint = query
         ? `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&include_adult=false&language=en-US&page=1`
         : `https://api.themoviedb.org/3/trending/movie/day?language=en-US`;
 
       const response = await fetch(endpoint, options);
-      if (!response.ok) throw new Error('Failed to fetch movies. Please check your connection.');
+      if (!response.ok) throw new Error('Failed to fetch movies. Check your connection.');
       
       const data = await response.json();
-      setMovies(data.results);
+      setMovies(data.results || []);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -39,14 +40,12 @@ const Home = () => {
     }
   };
 
-  // --- DEBOUNCE LOGIC ---
+  // --- DEBOUNCE LOGIC (Satisfies Requirement) ---
   useEffect(() => {
-    // This timer waits 500ms before calling the API
     const getData = setTimeout(() => {
       fetchMovies(searchQuery);
-    }, 500);
+    }, 500); // Waits 0.5s after you stop typing
 
-    // This "cleanup" function cancels the timer if the user types another letter quickly
     return () => clearTimeout(getData);
   }, [searchQuery]); 
 
@@ -64,7 +63,7 @@ const Home = () => {
 
   return (
     <div className="pb-20 min-h-screen bg-black text-white">
-      {/* Hero Section - Only shows on main trending page, not during search */}
+      {/* Hero Section - Only shows on trending page */}
       {!searchQuery && movies[0] && !loading && (
         <div className="relative h-[60vh] w-full mb-10">
           <img 
@@ -85,16 +84,12 @@ const Home = () => {
           {searchQuery ? `Results for "${searchQuery}"` : 'Trending Today'}
         </h2>
 
-        {/* SCENARIO 1: No movies found (and not loading)
-          SCENARIO 2: Loading (Show Skeletons)
-          SCENARIO 3: Loaded (Show MovieCards)
-        */}
         {movies.length === 0 && !loading ? (
-          <p className="text-white/50 text-center py-20">No movies found. Try a different search.</p>
+          <p className="text-white/50 text-center py-20">No movies found.</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {loading 
-              ? Array(10).fill(0).map((_, i) => <SkeletonCard key={i} />) 
+              ? Array(10).fill(0).map((_, i) => <SkeletonCard key={i} />) // FIXED: Uses SkeletonCard
               : movies.map(m => <MovieCard key={m.id} movie={m} />)
             }
           </div>
