@@ -72,10 +72,12 @@ const Home = () => {
           <p className="text-white/50 text-center py-20">No movies found. Try a different search.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            
             {loading 
-              ? Array(8).fill(0).map((_, i) => <SkeletonCard key={i} />) 
-              : movies.map(m => <MovieCard key={m.id} movie={m} />)
-            }
+  ? Array(8).fill(0).map((_, i) => <SkeletonCard key={i} />) 
+  : movies.map(m => <MovieCard key={m.id} movie={m} />)
+}
+
           </div>
         )}
       </div>
