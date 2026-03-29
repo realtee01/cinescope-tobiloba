@@ -63,7 +63,7 @@ CineScope is a high-performance web application built with **React.js** and **Ta
 
 **Tobiloba Akala**
 *Computer Science Undergraduate, University of Lagos (UNILAG)*
-
+axia cohort 9 student 2025/2026
 ---
 
 ## 📄 License
