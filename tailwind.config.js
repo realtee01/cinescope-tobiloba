@@ -6,15 +6,14 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        espresso: '#120C08',
-        terra: '#C4622D',
-        'terra-light': '#E8855A',
-        cream: '#FAF7F2',
+      animation: {
+        'loading-bar': 'loading 4s ease-in-out forwards',
       },
-      fontFamily: {
-        display: ['Playfair Display', 'serif'],
-        body: ['Outfit', 'sans-serif'],
+      keyframes: {
+        loading: {
+          '0%': { transform: 'scaleX(0)' },
+          '100%': { transform: 'scaleX(1)' },
+        },
       },
     },
   },
