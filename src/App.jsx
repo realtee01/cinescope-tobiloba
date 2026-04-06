@@ -1,3 +1,9 @@
+/**
+ * CineScope - Movie Discovery Web App
+ * Built by: Tobiloba Akala
+ * Features: Context API, TMDB Integration, Persistent Watchlist
+ */
+
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { MovieProvider } from './context/MovieContext';
