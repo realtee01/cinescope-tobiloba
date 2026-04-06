@@ -1,64 +1,55 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Heart } from 'lucide-react';
-import { useMovieContext } from '../context/MovieContext';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu, X, User, LogIn, Home } from 'lucide-react';
 
 const Navbar = () => {
-  const [query, setQuery] = useState('');
-  const { watchlist } = useMovieContext();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
 
-  // Keep the search fix: Only navigate if user is typing
-  useEffect(() => {
-    if (query.trim().length > 0) {
-      const timer = setTimeout(() => {
-        navigate(`/?search=${encodeURIComponent(query)}`);
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [query, navigate]);
-
-  // Clear search bar when navigating away from Home
-  useEffect(() => {
-    if (location.pathname !== '/') {
-      setQuery('');
-    }
-  }, [location.pathname]);
+  const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
-    <nav className="bg-black/95 border-b border-white/10 sticky top-0 z-50 px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        <Link to="/" className="text-2xl font-black italic text-[#C4622D]">
-          CineScope
-        </Link>
-        
-        <div className="flex-1 max-w-md relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 w-4 h-4" />
-          <input 
-            type="text" 
-            placeholder="Search movies..." 
-            className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:border-[#C4622D] text-sm"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
+    <nav className="fixed top-0 w-full z-[60] bg-black/60 backdrop-blur-xl px-6 py-4 flex justify-between items-center border-b border-white/5">
+      {/* Logo */}
+      <Link to="/" className="text-2xl font-black text-orange-500 tracking-tighter">
+        CINESCOPE
+      </Link>
 
-        {/* WATCHLIST HEART + COUNTER BADGE */}
-        <Link to="/watchlist" className="relative p-2 group">
-          <Heart 
-            className={`w-6 h-6 transition-colors ${
-              watchlist.length > 0 ? 'fill-[#C4622D] text-[#C4622D]' : 'text-white/70 group-hover:text-white'
-            }`} 
-          />
-          
-          {/* THE COUNTER ICON */}
-          {watchlist.length > 0 && (
-            <span className="absolute -top-1 -right-1 bg-[#C4622D] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-black min-w-[20px] text-center">
-              {watchlist.length}
-            </span>
-          )}
+      {/* Desktop Links */}
+      <div className="hidden md:flex gap-8 items-center font-medium">
+        <Link to="/" className="hover:text-orange-500 transition">Movies</Link>
+        <Link to="/login" className="hover:text-orange-500 transition">Login</Link>
+        <Link to="/signup" className="bg-orange-500 px-6 py-2 rounded-full font-bold hover:bg-orange-600 transition">
+          Sign Up
         </Link>
+      </div>
+
+      {/* Mobile Toggle Button */}
+      <button className="md:hidden text-white p-2" onClick={toggleMenu}>
+        {isOpen ? <X size={30} /> : <Menu size={30} />}
+      </button>
+
+      {/* Mobile Slide-out Menu Overlay */}
+      <div className={`fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'} md:hidden`}>
+        <div className={`fixed right-0 top-0 h-full w-[75%] bg-zinc-950 p-8 flex flex-col gap-8 transition-transform duration-300 border-l border-white/10 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          
+          <div className="flex justify-between items-center mb-4">
+             <span className="text-orange-500 font-bold text-xl">Menu</span>
+             <button onClick={toggleMenu}><X size={32} /></button>
+          </div>
+
+          <div className="flex flex-col gap-6 text-xl">
+            <Link to="/" onClick={toggleMenu} className="flex items-center gap-4 hover:text-orange-500">
+              <Home size={24} /> Home
+            </Link>
+            <Link to="/login" onClick={toggleMenu} className="flex items-center gap-4 hover:text-orange-500">
+              <LogIn size={24} /> Login
+            </Link>
+            <hr className="border-white/10" />
+            <Link to="/signup" onClick={toggleMenu} className="bg-orange-500 p-4 rounded-2xl text-center font-bold flex items-center justify-center gap-2">
+              <User size={20} /> Create Account
+            </Link>
+          </div>
+        </div>
       </div>
     </nav>
   );
