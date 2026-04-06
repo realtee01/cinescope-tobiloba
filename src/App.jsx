@@ -1,34 +1,49 @@
-/**
- * CineScope - Movie Discovery Web App
- * Built by: Tobiloba Akala
- * Features: Context API, TMDB Integration, Persistent Watchlist
- */
-
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { MovieProvider } from './context/MovieContext';
-import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import MovieDetail from './pages/MovieDetail';
-import Watchlist from './pages/Watchlist';
+import Navbar from './components/Navbar';
+import Splash from './components/Splash';
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  // Automatically hide splash after 4.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <MovieProvider>
-      <Router>
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-          <Navbar />
-          <main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/movie/:id" element={<MovieDetail />} />
-              <Route path="/watchlist" element={<Watchlist />} />
-              {/* REMOVED: The redirect line that was causing the loop */}
-            </Routes>
-          </main>
-        </div>
-      </Router>
-    </MovieProvider>
+    <>
+      {loading ? (
+        <Splash />
+      ) : (
+        <Router>
+          <div className="bg-black min-h-screen text-white selection:bg-orange-500 selection:text-white">
+            <Navbar />
+            <main className="pt-20"> {/* Prevents content from hiding under fixed Navbar */}
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={
+                  <div className="h-[80vh] flex items-center justify-center">
+                    <p className="text-gray-500 italic">Login functionality coming soon via Supabase...</p>
+                  </div>
+                } />
+                <Route path="/signup" element={
+                  <div className="h-[80vh] flex items-center justify-center">
+                    <p className="text-gray-500 italic">Signup functionality coming soon via Supabase...</p>
+                  </div>
+                } />
+              </Routes>
+            </main>
+          </div>
+        </Router>
+      )}
+    </>
   );
 }
 
 export default App;
+
