@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, Heart, Search } from 'lucide-react';
-import { useMovie } from '../context/MovieContext'; // Assuming this is where your watchlist lives
-
+import { useMovieContext } from '../ context/MovieContext';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { watchlist } = useMovie(); // Get the watchlist array to show the count
+  const { watchlist = useMovieContext () ;//Get the watchlist array to show the count
 
   return (
     <nav className="fixed top-0 left-0 w-full z-[100] bg-[#0a0a0a] border-b border-white/10 px-4 py-3">
